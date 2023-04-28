@@ -1,0 +1,43 @@
+clc
+clear
+rc=1.0;
+u=10;
+theta = linspace(0,2*pi);    
+r = linspace(rc,3*rc);
+[t, rr] = meshgrid (theta, r);
+[T,R]=pol2cart(t,rr);
+
+% To plot stream function 
+psi = (1-((rc./(rr)).^2)).*(u.*rr.*(sin(t)));  
+
+figure (1)
+
+    [M,c] = contourf(T,R,psi);  
+    xlabel('X'), ylabel('Y'), title('Stream Function')
+
+
+% To plot velocity magnitude
+syms r1 t1
+psi1= (1-((rc./(r1)).^2)).*(u.*r1.*(sin(t1)));  
+vr = (1./r1)*diff(psi1,t1);
+vt= -diff(psi1,r1);
+vx = double(subs(vr, {t1,r1}, {t,rr}));
+vy = double(subs(vt, {t1,r1}, {t,rr}));
+v=sqrt((vx.^2)+(vy.^2));
+
+
+figure(2)
+    [M,c]= contourf(T,R,v);  
+    xlabel('X'), ylabel('Y'), title('Velocity Magnitude')
+
+
+% To plot gauge pressure distribution of flow around the cylinder
+% Use Bernoulli's Equation to find pressure
+% Take one point on the cylinder and another point in the atmosphere
+rho=1.2;
+Po=0;
+Pc=Po+(1./2)*rho*((u.^2)-(v.^2));
+
+figure(3)
+    [M,c]= contourf(T,R,Pc);  
+    xlabel('X'), ylabel('Y'), title('Gauge Pressure Distribution')
